@@ -21,6 +21,8 @@ export type Note = Row & {
     content: string;
 }
 
+export type NoteInsert = Omit<Note, 'id' | 'createdAt' | 'updatedAt'>;
+
 export type Conversation = Row & {
     content: string;
 }
