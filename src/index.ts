@@ -2,10 +2,17 @@ import { Command } from "commander";
 import Database from "better-sqlite3";
 import { join } from "path";
 import os from "os";
+import { existsSync, mkdirSync } from "fs";
 
 // db init
-const db = new Database(join(os.homedir(), '.config', 'kips', 'kips.db'));
-db.exec('PRAGMA foreign_keys = ON');
+const dbPath = join(os.homedir(), '.config', 'kips');
+if (!existsSync(dbPath)) {
+    mkdirSync(dbPath, { recursive: true });
+}
+
+const db = new Database(join(dbPath, 'kips.db'));
+db.pragma('foreign_keys = ON');
+db.pragma('journal_mode = WAL');
 db.exec('CREATE TABLE IF NOT EXISTS auth (id INTEGER PRIMARY KEY AUTOINCREMENT, createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, username TEXT, password TEXT, url TEXT, notes TEXT)');
 db.exec('CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, objective TEXT, progressAssessment TEXT, completed BOOLEAN)');
 db.exec('CREATE TABLE IF NOT EXISTS note (id INTEGER PRIMARY KEY AUTOINCREMENT, createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, content TEXT)');
