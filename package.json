@@ -11,11 +11,13 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22.10.1",
+    "@types/papaparse": "^5.3.15",
     "typescript": "^5.7.2"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",
     "better-sqlite3": "^11.6.0",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "papaparse": "^5.4.1"
   }
 }
