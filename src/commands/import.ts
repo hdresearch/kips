@@ -102,17 +102,24 @@ function authInsert(db: Database, file: string) {
 
     Object.entries(row).forEach(([key, value]) => {
       const normalizedKey = key.toLowerCase().trim();
-
+      // Sometimes password managers use email as the username
+      if (normalizedKey === "email") {
+        normalizedRow["username"] = (value as string).trim();
+      }
       if (
         normalizedKey === "username" ||
         normalizedKey === "password" ||
         normalizedKey === "url" ||
         normalizedKey === "notes"
       ) {
-        normalizedRow[normalizedKey as keyof AuthInsert] =
-          typeof value === "string"
-            ? value.trim()
-            : (value as string | undefined);
+        // We want to prohibit a clobber with an empty username
+        // in the email case.
+        if (normalizedRow[normalizedKey as keyof AuthInsert] === undefined) {
+          normalizedRow[normalizedKey as keyof AuthInsert] =
+            typeof value === "string"
+              ? value.trim()
+              : (value as string | undefined);
+        }
       }
     });
     return normalizedRow;
