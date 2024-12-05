@@ -4,6 +4,7 @@ import os from "os";
 import { existsSync, mkdirSync } from "fs";
 import { getDb } from "./lib/index.js";
 import { createImportCommand } from "./commands/import.js";
+import { createServer } from "./mcp.js";
 
 // db init
 const dbPath = join(os.homedir(), '.config', 'kips');
@@ -36,4 +37,5 @@ db.close();
 const program = new Command();
 program.name("kips").version("0.0.1").description("Personal data storage for models and the HDR platform.");
 program.addCommand(createImportCommand());
+program.addCommand(createServer());
 program.parse(process.argv);
