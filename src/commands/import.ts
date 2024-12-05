@@ -114,7 +114,7 @@ function authInsert(db: Database, file: string) {
       ) {
         // We want to prohibit a clobber with an empty username
         // in the email case.
-        if (normalizedRow[normalizedKey as keyof AuthInsert] === undefined) {
+        if (normalizedRow[normalizedKey as keyof AuthInsert] === '') {
           normalizedRow[normalizedKey as keyof AuthInsert] =
             typeof value === "string"
               ? value.trim()
