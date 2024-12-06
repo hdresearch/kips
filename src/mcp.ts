@@ -1,6 +1,6 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { Command } from "commander";
 import { getDb } from "./lib/index.js";
 import { Database } from "better-sqlite3";
@@ -50,37 +50,47 @@ class KipsServer {
     }
   
     private setupHandlers(): void {
-      this.server.setRequestHandler(ListResourcesRequestSchema, async (request) => {
+      this.server.setRequestHandler(ListResourcesRequestSchema, async () => {
         const tables = this.db.prepare(`
           SELECT name FROM sqlite_master 
           WHERE type='table' 
           AND name NOT LIKE 'sqlite_%'
         `).all() as Array<{ name: string }>;
-    
-        const resources = tables.map(table => {
-          const columns = this.db.prepare(`PRAGMA table_info("${table.name}")`).all();
-          const schema = {
-            type: "object",
-            properties: columns.reduce((acc: any, col: any) => {
-              acc[col.name] = {
-                type: this.mapSqliteTypeToJsonSchema(col.type),
-                nullable: !col.notnull
-              };
-              return acc;
-            }, {})
-          };
-          console.error(schema)
-    
-          return {
+      
+        return {
+          resources: tables.map(table => ({
             uri: `sqlite:///${table.name}`,
             mimeType: "application/json",
-            name: `${table.name} table schema`,
+            name: `${table.name} table`
+          }))
+        };
+      });
+      
+      this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+        const tableName = request.params.uri.replace('sqlite:///', '');
+        
+        const columns = this.db.prepare(`PRAGMA table_info("${tableName}")`).all();
+        const schema = {
+          type: "object", 
+          properties: columns.reduce((acc: any, col: any) => {
+            acc[col.name] = {
+              type: this.mapSqliteTypeToJsonSchema(col.type),
+              nullable: !col.notnull
+            };
+            return acc;
+          }, {})
+        };
+      
+        return {
+          contents: [{
+            uri: request.params.uri,
+            mimeType: "application/json",
+            text: JSON.stringify(schema),
+            blob: "",
             schema
-          };
-        });
-    
-        return { resources };
-      })
+          }]
+        };
+      });
 
       this.server.setRequestHandler(ListToolsRequestSchema, async () => {
         return {
