@@ -5,6 +5,9 @@
   "scripts": {
     "build": "tsc"
   },
+  "bin": {
+    "kips": "./build/index.js"
+  },
   "author": "High Dimensional Research",
   "license": "ISC",
   "description": "",
