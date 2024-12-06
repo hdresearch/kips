@@ -69,6 +69,7 @@ class KipsServer {
               return acc;
             }, {})
           };
+          console.error(schema)
     
           return {
             uri: `sqlite:///${table.name}`,
@@ -146,15 +147,13 @@ class KipsServer {
     const server = new KipsServer();
     await server.run();
   }
-  
-  main().catch((error) => {
-    console.error('Server error:', error);
-    process.exit(1);
-  });
 
   export function createServer() {
     return new Command("serve")
       .action(() => {
-        main();
+        main().catch((error) => {
+          console.error('Server error:', error);
+          process.exit(1);
+        });
       });
   }
