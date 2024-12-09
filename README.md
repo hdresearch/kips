@@ -35,6 +35,8 @@ Integrate it into Claude Desktop to let Claude query, insert or update the datab
 npx kips config
 ```
 
+You'll then be able to see the MCP server in Claude Desktop (usually after restart) with the hammer icon, and all applicable tables as resources you can "connect" with the plug icon.
+
 ### Expected formats
 
 The csv imports expect specific headers in order to be useful.
