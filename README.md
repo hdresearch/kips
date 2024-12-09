@@ -1,10 +1,16 @@
 # kips
 
-Personal data management for the HDC. Integrates with Claude Desktop and other MCP clients.
+Personal data management server. Integrates with Claude Desktop and other MCP clients.
 
 ## Usage
 
-Just run it normally to init the database:
+kips drives a SQLite database and surfaces tools for LLMs as well as a basic CLI for interacting with the database.
+
+You can store `auth` (passwords and usernames), `note`s, `conversation`s, `task`s (leftover work to do from last time) and of course `tag`s. 
+
+Notes, conversations and tasks have join tables with tags under `noteTag`, `conversationTag` and `taskTag`.
+
+Just run it normally first to init the database:
 
 ```bash
 npx kips
@@ -23,7 +29,7 @@ npx kips import --type conversation ~/claudechat.txt --tag "therapy"
 npx kips import --type task ~/tasks.csv --tag "therapy revenge"
 ```
 
-Integrate it into Claude to let Claude query, insert or update the database:
+Integrate it into Claude Desktop to let Claude query, insert or update the database by running the `config` command:
 
 ```bash
 npx kips config
