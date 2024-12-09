@@ -23,7 +23,7 @@ npx kips import --type conversation ~/claudechat.txt --tag "therapy"
 npx kips import --type task ~/tasks.csv --tag "therapy revenge"
 ```
 
-Integrate it into Claude to let Claude query the database:
+Integrate it into Claude to let Claude query, insert or update the database:
 
 ```bash
 npx kips config
@@ -40,6 +40,10 @@ We expect a .csv file with `url`, `username` **or** `email` (both can exist, but
 #### Tasks
 
 We expect a .csv file with `objective`, `progressAssessment` and `completed` columns. `completed` is a boolean.
+
+### Usage with Claude Desktop
+
+All operations are specified for MCP clients and all schemas are exposed as attachable resources. If you have more complex files (screenshots, PDFs) you can get Claude to read and transcribe it direct to the database. At present, you'll need to attach all schemas you intend to use or Claude will have to look up the schema again before applying an operation.
 
 ## Development
 
