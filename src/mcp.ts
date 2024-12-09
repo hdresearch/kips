@@ -106,6 +106,28 @@ class KipsServer {
                 required: ["sql"]
               },
             },
+            {
+              name: "insert",
+              description: "Run a SQL insert query",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  sql: { type: "string" },
+                },
+                required: ["sql"]
+              },
+            },
+            {
+              name: "update",
+              description: "Run a SQL update query",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  sql: { type: "string" },
+                },
+                required: ["sql"]
+            }
+          }
           ],
         };
       });
@@ -138,6 +160,60 @@ class KipsServer {
             }
           }
 
+        }
+        if (request.params.name === "insert") {
+          const sql = request.params.arguments?.sql as string;
+
+          if (!sql.trim().toLowerCase().startsWith('insert')) {
+            throw new Error('Only INSERT queries are allowed');
+          }
+
+          try {
+            const stmt = this.db.prepare(sql);
+            const info = stmt.run();
+            return {
+              content: [{
+                type: "text",
+                text: JSON.stringify(info, null, 2),
+              }],
+              isError: false
+            };
+          } catch (error: any) {
+            return {
+              content: [{
+                type: "text",
+                text: error.message,
+              }],
+              isError: true
+            }
+          }
+        }
+        if (request.params.name === "update") {
+          const sql = request.params.arguments?.sql as string;
+
+          if (!sql.trim().toLowerCase().startsWith('update')) {
+            throw new Error('Only UPDATE queries are allowed');
+          }
+
+          try {
+            const stmt = this.db.prepare(sql);
+            const info = stmt.run();
+            return {
+              content: [{
+                type: "text",
+                text: JSON.stringify(info, null, 2),
+              }],
+              isError: false
+            };
+          } catch (error: any) {
+            return {
+              content: [{
+                type: "text",
+                text: error.message,
+              }],
+              isError: true
+            }
+          }
         }
         throw new Error(`Unknown tool: ${request.params.name}`);
       });
