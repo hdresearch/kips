@@ -191,8 +191,8 @@ class KipsServer {
         if (request.params.name === "update") {
           const sql = request.params.arguments?.sql as string;
 
-          if (!sql.trim().toLowerCase().startsWith('update')) {
-            throw new Error('Only UPDATE queries are allowed');
+          if (!sql.trim().toLowerCase().startsWith('update') && !sql.trim().toLowerCase().startsWith('delete')) {
+            throw new Error('Only UPDATE or DELETE queries are allowed');
           }
 
           try {
